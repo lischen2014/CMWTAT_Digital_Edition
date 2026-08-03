@@ -1532,10 +1532,13 @@ namespace CMWTAT_DIGITAL
                 RunCMD(@"sc start clipsvc");
 
                 RunCMD(@"clipup -v -o -altto " + tempfile);
+                File.WriteAllText(tempfile + "GenuineTicketvNext.xml", ticket, Encoding.UTF8);
                 RunCMD(@"clipup -v -o -altto " + tempfile.TrimEnd('\\')); // 旧版本系统的 ClipUp 路径不能带最后的反斜杠
                 if (OSVersionInfo.BuildVersion > 20348)
                 {
+                    File.WriteAllText(tempfile + "GenuineTicketvNext.xml", ticket, Encoding.UTF8);
                     RunCLI(tempfile + "ClipUp.exe", ".", "-v -o -altto " + tempfile); // 固定版本解决 22H2 后 ARM64 许可证接收问题
+                    File.WriteAllText(tempfile + "GenuineTicketvNext.xml", ticket, Encoding.UTF8);
                     RunCLI(tempfile + "ClipUp.exe", ".", "-v -o -altto " + tempfile.TrimEnd('\\'));
                 }
 
