@@ -195,6 +195,7 @@ namespace CMWTAT_DIGITAL
         ResourceDictionary langRd = null; //语言资源字典
         public static CultureInfo currentCultureInfo = CultureInfo.CurrentCulture; //获取系统语言
         public static bool NotSupportLang = false;
+        public static Version version = OSVersionInfo.VersionWithoutEKB;
 
         /// <summary>
         /// 加载指定语言（支持热加载）
@@ -616,18 +617,18 @@ namespace CMWTAT_DIGITAL
 
                     //按照优先级判断，如果已经自动选择则忽略新的
                     //选择带版本号
-                    if (String.Equals(jsonobj["OS"][i].ToString(), SystemEdition + OSVersionInfo.BuildVersion, StringComparison.CurrentCultureIgnoreCase) && is_selected == 0)//jsonobj["OS"][i].ToString() == SystemEdition + OSVersionInfo.BuildVersion
+                    if (String.Equals(jsonobj["OS"][i].ToString(), SystemEdition + version.Build, StringComparison.CurrentCultureIgnoreCase) && is_selected == 0)//jsonobj["OS"][i].ToString() == SystemEdition + version.Build
                     {
                         now_os_index = i;
-                        checked_os = SystemEdition + OSVersionInfo.BuildVersion;
+                        checked_os = SystemEdition + version.Build;
                         is_selected = 1;
                     }
 
                     //选择带版本号Offline-KMS
-                    if (String.Equals(jsonobj["OS"][i].ToString(), "(Offline-KMS) " + SystemEdition + OSVersionInfo.BuildVersion, StringComparison.CurrentCultureIgnoreCase) && is_selected == 0)//旧的方法：jsonobj["OS"][i].ToString() == "(Experimental) " + SystemEdition，新方法忽略大小写并提升效率
+                    if (String.Equals(jsonobj["OS"][i].ToString(), "(Offline-KMS) " + SystemEdition + version.Build, StringComparison.CurrentCultureIgnoreCase) && is_selected == 0)//旧的方法：jsonobj["OS"][i].ToString() == "(Experimental) " + SystemEdition，新方法忽略大小写并提升效率
                     {
                         now_os_index = i;
-                        checked_os = "(Offline-KMS) " + SystemEdition + OSVersionInfo.BuildVersion;
+                        checked_os = "(Offline-KMS) " + SystemEdition + version.Build;
                         is_selected = 3;
                     }
 
@@ -665,21 +666,21 @@ namespace CMWTAT_DIGITAL
                     {
                         this.SystemEditionText.SelectedIndex = 0;
                         this.DialogWithOKToCloseDialog.Title = (string)this.Resources["Attention"];
-                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["May_be_not_be_supported"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + OSVersionInfo.BuildVersion + ")";
+                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["May_be_not_be_supported"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + version.Build + ")";
                         OpenDialog(this.DialogWithOKToCloseDialog);
                     }
                     else if (is_selected == 2)//只找到实验性
                     {
                         this.SystemEditionText.SelectedIndex = now_os_index;
                         this.DialogWithOKToCloseDialog.Title = (string)this.Resources["Attention"];
-                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["Only_find_experimental"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + OSVersionInfo.BuildVersion + ")";
+                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["Only_find_experimental"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + version.Build + ")";
                         OpenDialog(this.DialogWithOKToCloseDialog);
                     }
                     else if (is_selected == 3)//只找到长期KMS
                     {
                         this.SystemEditionText.SelectedIndex = now_os_index;
                         this.DialogWithOKToCloseDialog.Title = (string)this.Resources["Attention"];
-                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["Only_find_ltok"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + OSVersionInfo.BuildVersion + ")";
+                        this.DialogWithOKToCloseDialogText.Text = (string)this.Resources["Only_find_ltok"] + "\r\n(" + (string)this.Resources["System_Edition"] + ": " + SystemEdition + version.Build + ")";
                         OpenDialog(this.DialogWithOKToCloseDialog);
                     }
                     else
@@ -776,7 +777,7 @@ namespace CMWTAT_DIGITAL
 
         private void CheckWindows24H2()
         {
-            if (OSVersionInfo.BuildVersion < 26100)
+            if (version.Build < 26100)
             {
                 rebootlessupdatebtn.IsEnabled = false;
                 rebootlessupdatebtn.Visibility = Visibility.Collapsed;
@@ -1534,7 +1535,7 @@ namespace CMWTAT_DIGITAL
                 RunCMD(@"clipup -v -o -altto " + tempfile);
                 File.WriteAllText(tempfile + "GenuineTicketvNext.xml", ticket, Encoding.UTF8);
                 RunCMD(@"clipup -v -o -altto " + tempfile.TrimEnd('\\')); // 旧版本系统的 ClipUp 路径不能带最后的反斜杠
-                if (OSVersionInfo.BuildVersion > 20348)
+                if (version.Build > 20348)
                 {
                     File.WriteAllText(tempfile + "GenuineTicketvNext.xml", ticket, Encoding.UTF8);
                     RunCLI(tempfile + "ClipUp.exe", ".", "-v -o -altto " + tempfile); // 固定版本解决 22H2 后 ARM64 许可证接收问题
